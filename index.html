@@ -71,11 +71,9 @@
     </div>
 
     <script>
-        // Función para calcular el resultado
         function calcularResultado() {
             var cantidad = parseFloat(document.getElementById('amount').value);
             
-            // Verificar si la cantidad es válida
             if (isNaN(cantidad) || cantidad <= 0) {
                 document.getElementById('result').textContent = "Por favor, introduce una cantidad válida.";
                 document.getElementById('calculation').innerHTML = "";
@@ -114,23 +112,19 @@
             document.getElementById('calculation').innerHTML = desglose;
         }
 
-        // "Debounce" para evitar demasiados cálculos rápidos
         let timer;
 
-        // Evento "input" para el campo de cantidad
         document.getElementById('amount').addEventListener('input', function() {
             clearTimeout(timer);
-            timer = setTimeout(calcularResultado, 300); // Espera 300 ms antes de calcular
+            timer = setTimeout(calcularResultado, 300);
         });
 
-        // Evento "focus" para asegurar que los cálculos se hagan cuando el usuario empiece a escribir
         document.getElementById('amount').addEventListener('focus', function() {
-            calcularResultado(); // Calcula cuando el campo obtiene foco
+            calcularResultado(); 
         });
 
-        // Evento "change" para cuando el valor cambie (en caso de que el input se complete)
         document.getElementById('amount').addEventListener('change', function() {
-            calcularResultado(); // Recalcula si el valor cambia
+            calcularResultado(); 
         });
 
     </script>
