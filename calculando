@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Desglosada</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        h2 {
+            font-size: 1.5em;
+            text-align: center;
+        }
+        label, .result, .calculation {
+            font-size: 1em;
+            margin: 10px 0;
+            display: block;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            font-size: 1.2em;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .result {
+            font-size: 18px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .calculation {
+            font-size: 16px;
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+            word-wrap: break-word;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+                width: 90%;
+            }
+            input {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Calculadora Desglosada</h2>
+        <label for="amount">Introduce la cantidad en euros:</label>
+        <input type="number" id="amount" placeholder="Cantidad en €" required step="0.01">
+
+        <div id="result" class="result"></div>
+        <div id="calculation" class="calculation"></div>
+    </div>
+
+    <script>
+        // Función para calcular el resultado
+        function calcularResultado() {
+            var cantidad = parseFloat(document.getElementById('amount').value);
+            
+            // Verificar si la cantidad es válida
+            if (isNaN(cantidad) || cantidad <= 0) {
+                document.getElementById('result').textContent = "Por favor, introduce una cantidad válida.";
+                document.getElementById('calculation').innerHTML = "";
+                return;
+            }
+
+            var resultado;
+            var parteFija, parteVariable, porcentaje;
+            var porcentajeRedondeado;
+
+            if (cantidad <= 15000) {
+                parteFija = 300;
+                if (cantidad < 12750) {
+                    porcentaje = 0.05;
+                } else if (cantidad >= 12750 && cantidad <= 15000) {
+                    var interpolacion = (cantidad - 12750) / (15000 - 12750);
+                    porcentaje = 0.07 + (interpolacion * 0.03);
+                }
+            } else {
+                parteFija = 300;
+                porcentaje = 0.10;
+            }
+
+            porcentajeRedondeado = (porcentaje * 100).toFixed(1);
+            parteVariable = porcentaje * cantidad;
+            resultado = parteFija + parteVariable;
+
+            document.getElementById('result').textContent = "El resultado es: " + resultado.toFixed(2) + " €";
+
+            var desglose = 
+                `<strong>Cálculo Desglosado:</strong><br>
+                Parte fija: ${parteFija.toFixed(2)} €<br>
+                Porcentaje aplicado: ${porcentajeRedondeado}%<br>
+                Parte variable: ${parteVariable.toFixed(2)} €<br>
+                Total: ${resultado.toFixed(2)} €`;
+            document.getElementById('calculation').innerHTML = desglose;
+        }
+
+        // "Debounce" para evitar demasiados cálculos rápidos
+        let timer;
+
+        // Evento "input" para el campo de cantidad
+        document.getElementById('amount').addEventListener('input', function() {
+            clearTimeout(timer);
+            timer = setTimeout(calcularResultado, 300); // Espera 300 ms antes de calcular
+        });
+
+        // Evento "focus" para asegurar que los cálculos se hagan cuando el usuario empiece a escribir
+        document.getElementById('amount').addEventListener('focus', function() {
+            calcularResultado(); // Calcula cuando el campo obtiene foco
+        });
+
+        // Evento "change" para cuando el valor cambie (en caso de que el input se complete)
+        document.getElementById('amount').addEventListener('change', function() {
+            calcularResultado(); // Recalcula si el valor cambia
+        });
+
+    </script>
+
+</body>
+</html>
